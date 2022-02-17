@@ -4,10 +4,17 @@ import zstandard as zstd
 import simplejson as json
 import time
 import pandas as pd
+import csv
 
-filename = "RC_2020-01-27"
+filename = "RC_2021-05"
 # Known bots and invalid authors (e.g., [deleted], AutoModerator) that won't be useful for analysis
-bad_authors = ["[deleted]", "AutoModerator", "NFCAAOfficialRefBot", "KeepingDankMemesDank", "transcribot", "VredditDownloader", "Edgar_The_Pug_Bot", "RepostSleuthBot", "Expresstron", "transcribersofreddit", "tiny_pussy", "MTGCardFetcher", "KickItOpen_Bot", "MAGIC_EYE_BOT", "lettuce_finder", "Marketron-I", "RLCD-Bot", "nwordcountbot"]
+# bad_authors = ["[deleted]", "AutoModerator", "NFCAAOfficialRefBot", "KeepingDankMemesDank", "transcribot", "VredditDownloader", "Edgar_The_Pug_Bot", "RepostSleuthBot", "Expresstron", "transcribersofreddit", "tiny_pussy", "MTGCardFetcher", "KickItOpen_Bot", "MAGIC_EYE_BOT", "lettuce_finder", "Marketron-I", "RLCD-Bot", "nwordcountbot", "c0debrain", "SirLong3", "ChoiceEvidence", "SaveVideo", "Shakespeare-Bot"]
+
+with open ("./Params/badAuthors.csv") as file_name:
+    file_read = csv.reader(file_name)
+
+bad_authors = list(file_read)
+
 
 obs = []
 obs_count = 0
@@ -29,7 +36,7 @@ with open(filename + ".zst", 'rb') as fh:
                 # do something with the object here
                 if object['author'] not in bad_authors:   
                     obs.append([object['author'], object['created_utc'], object['score'], object['subreddit'], object['author_flair_text']])
-                    if len(obs) > 1000000:
+                    if len(obs) > 5000000:
                         df = pd.DataFrame(obs)
                         df.to_csv(filename + "_a_" + str(obs_count) + ".csv", index = False)
                         obs = []
